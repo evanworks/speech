@@ -68,11 +68,29 @@ window.addEventListener('load', (event) => {
 });
 
 function speak() {
-  let msg = new SpeechSynthesisUtterance(document.getElementById("thoughts").value);
-  msg.lang = "en-US";
-  msg.rate = 0.9;
-  msg.pitch = 1;
-  window.speechSynthesis.speak(msg);
+  let utterance = new SpeechSynthesisUtterance(document.getElementById("thoughts").value);
+  utterance.lang = "en-US";
+  utterance.rate = 0.9;
+  utterance.pitch = 1;
+  utterance.voice = 
+  window.speechSynthesis.speak(utterance);
+
+  utterance.onstart = () => {
+    document.getElementById("cancel").disabled = false;
+    document.getElementById("speak").firstElementChild.classList.remove("fa-phone");
+    document.getElementById("speak").firstElementChild.classList.add("fa-phone-volume");
+  }
+  utterance.onend = () => {
+    document.getElementById("cancel").disabled = true;
+    document.getElementById("speak").firstElementChild.classList.remove("fa-phone-volume");
+    document.getElementById("speak").firstElementChild.classList.add("fa-phone");
+  }
+  utterance.onerror = () => {
+    document.getElementById("cancel").disabled = true;
+    document.getElementById("speak").firstElementChild.classList.remove("fa-phone");
+    document.getElementById("speak").firstElementChild.classList.remove("fa-phone-volume");
+    document.getElementById("speak").firstElementChild.classList.add("fa-phone-slash");
+  }
 }
 
 let input = document.getElementById("thoughts");
@@ -89,15 +107,6 @@ setInterval(() => {
   } else {
     document.getElementById("speak").disabled = false;
   }
-  if (window.speechSynthesis.speaking) {
-    document.getElementById("cancel").disabled = false;
-    document.getElementById("speak").firstElementChild.classList.remove("fa-phone");
-    document.getElementById("speak").firstElementChild.classList.add("fa-phone-volume");
-  } else {
-    document.getElementById("cancel").disabled = true;
-    document.getElementById("speak").firstElementChild.classList.remove("fa-phone-volume");
-    document.getElementById("speak").firstElementChild.classList.add("fa-phone");
-  }
-}, 33.33); // 30 FPS (my computer's average framerate heheah)
+}, 41); // 30 FPS (my computer's average framerate heheah)
   </script>
 </html>
