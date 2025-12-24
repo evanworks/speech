@@ -5,46 +5,55 @@
     <link rel="icon" href="thefirststockphotoifoundwhenilookedupspeechongoogle.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <style>
-      body { 
-        margin: 0;
-        margin-left: 0.5vw;
-        margin-top: 0.5vw;
-      }
-      #thoughts {
-        width: 98vw;
-        height: 94vh;
-        margin-top: 2px;
-      }
-      #thoughts:focus {
-        outline: none;
-      }
-      #speak {
-        color: white;
-        background-color: green;
-      }
-      #cancel {
-        color: white;
-        background-color: red;
-      }
-      button {
-        margin: 1px;
-        border-left: 2px solid lightgrey;
-        border-right: 2px solid black;
-        border-top: 2px solid lightgrey;
-        border-bottom: 2px solid black;
-      }
-      button:active {
-        border-left: 2px solid black;
-        border-right: 2px solid lightgrey;
-        border-top: 2px solid black;
-        border-bottom: 2px solid lightgrey;
-      }
+body { 
+  margin: 0;
+  margin-left: 0.5vw;
+  margin-top: 0.5vw;
+}
+#thoughts {
+  width: 98vw;
+  height: 94vh;
+  margin-top: 2px;
+}
+#thoughts:focus {
+  outline: none;
+}
+#speak {
+  color: white;
+  background-color: green;
+}
+#cancel {
+  color: white;
+  background-color: red;
+}
+button {
+  margin: 1px;
+  border-left: 2px solid lightgrey;
+  border-right: 2px solid black;
+  border-top: 2px solid lightgrey;
+  border-bottom: 2px solid black;
+}
+button:active {
+  border-left: 2px solid black;
+  border-right: 2px solid lightgrey;
+  border-top: 2px solid black;
+  border-bottom: 2px solid lightgrey;
+}
+button:disabled {
+  background: grey !important;
+}
+button:active:disabled {
+  border-left: 2px solid lightgrey;
+  border-right: 2px solid black;
+  border-top: 2px solid lightgrey;
+  border-bottom: 2px solid black;
+}
     </style>
   </head>
-  <body onload="document.getElementById('speak_button').click()">
-    <button id="speak" onclick="speak()">Speak <i class="fa-solid fa-headphones"></i></button>
-      <button id="cancel" onclick="window.speechSynthesis.cancel()">Cancel <i class="fa-solid fa-ban"></i></button>
-    <textarea id="thoughts">Made by Evan Lee.</textarea>
+  <body>
+    <button id="speak" onclick="speak()">Speak <i class="fa-solid fa-phone"></i></button>
+    <button id="cancel" onclick="window.speechSynthesis.cancel()">Cancel <i class="fa-solid fa-ban"></i></button>
+    <textarea id="thoughts"></textarea>
 
     <!--<p>
     <input id="rate" type="range" name="rate" min="0.01" max="1.8" step="0.01" value="0.9" style="width: 150px;"><p></p>
@@ -52,8 +61,14 @@
     </p>-->
   </body>
   <script> 
+let startingSuggestions = ["Made by me, evan.", "Good morning, how did you sleep last afternoon?", "I just had the strangest thought...", "This was not made with and does not condone the use of AI. ahah", "Have a good day, devoid of any spiders!", "Welcome to speech! We won't sell your personal information on this site."];
+window.addEventListener('load', (event) => {
+  const suggestion = startingSuggestions[Math.floor(Math.random() * startingSuggestions.length)];
+  document.getElementById("thoughts").innerText = suggestion;
+});
+
 function speak() {
-  let msg = new SpeechSynthesisUtterance(document.getElementById('thoughts').value);
+  let msg = new SpeechSynthesisUtterance(document.getElementById("thoughts").value);
   msg.lang = "en-US";
   msg.rate = 0.9;
   msg.pitch = 1;
@@ -67,5 +82,22 @@ input.addEventListener("keypress", function(event) {
     document.getElementById("speak").click();
   }
 });
+
+setInterval(() => {
+  if (input.value.trim() === "") {
+    document.getElementById("speak").disabled = true;
+  } else {
+    document.getElementById("speak").disabled = false;
+  }
+  if (window.speechSynthesis.speaking) {
+    document.getElementById("cancel").disabled = false;
+    document.getElementById("speak").firstElementChild.classList.remove("fa-phone");
+    document.getElementById("speak").firstElementChild.classList.add("fa-phone-volume");
+  } else {
+    document.getElementById("cancel").disabled = true;
+    document.getElementById("speak").firstElementChild.classList.remove("fa-phone-volume");
+    document.getElementById("speak").firstElementChild.classList.add("fa-phone");
+  }
+}, 33.33); // 30 FPS (my computer's average framerate heheah)
   </script>
 </html>
